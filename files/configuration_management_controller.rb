@@ -775,7 +775,7 @@ class ConfigurationManagementController < ApplicationController
   def edit_anchor(anchor)
 
         ip_address = Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }.ip_address
-        key_cert   = File.read '/var/lib/xroad/public/key/AND_certificate.crt'
+        key_cert   = File.read '/etc/xroad/ssl/internal.crt'
         key_cert   = (((key_cert.gsub "\n","").sub "-----BEGIN CERTIFICATE-----","").sub "-----END CERTIFICATE-----","").strip
         dec64    = Base64.decode64(key_cert)
         hash512  = OpenSSL::Digest::SHA512.digest(dec64)
@@ -803,7 +803,7 @@ class ConfigurationManagementController < ApplicationController
         hash = OpenSSL::Digest::SHA512.digest(shared_params_data)
         shared_params_hash = Base64.encode64(hash)
         shared_params_hash = shared_params_hash.gsub "\n",""
-        arr[6]  = "Expire-date: 2022-12-18T01:20:01Z";
+        arr[6]  = "Expire-date: 2023-12-18T01:20:01Z";
         arr[13] = "Content-location: /V2_/" + shared_params_folder + "/shared-params.xml"
         arr[16] = shared_params_hash
         arr[22] = "Verification-certificate-hash: " + key_hash + '; hash-algorithm-id="http://www.w3.org/2001/04/xmlenc#sha512"';
@@ -815,7 +815,7 @@ class ConfigurationManagementController < ApplicationController
              signedData += arr[i]
           end
         end
-        key_private = OpenSSL::PKey.read File.read '/var/lib/xroad/public/key/AND_private.key'
+        key_private = OpenSSL::PKey.read File.read '/etc/xroad/ssl/internal.key'
         digest      = OpenSSL::Digest::SHA512.new
         signature   = key_private.sign digest, signedData
         signature64 = Base64.encode64(signature)
